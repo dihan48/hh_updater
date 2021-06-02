@@ -1,0 +1,11 @@
+---
+application:
+  name: "hh-updater"
+  project: "hh_updater"
+  organization: "QoveryCommunity"
+routers:
+- name: "main-hh-updater"
+  routes:
+  - application_name: "hh-updater"
+    paths:
+    - "/*"
