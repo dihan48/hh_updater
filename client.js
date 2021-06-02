@@ -1,9 +1,25 @@
 const puppeteer = require('puppeteer');
 const http = require('http');
- 
-http.createServer(function(req, response){
-  response.end("<img src='./screenshot.png'>");
-}).listen(3000);
+const fs = require("fs");
+  
+http.createServer(function(request, response){
+      
+    console.log(`Запрошенный адрес: ${request.url}`);
+    // получаем путь после слеша
+    const filePath = request.url.substr(1);
+    fs.readFile(filePath, function(error, data){
+        if(error){
+                  
+            response.statusCode = 404;
+            response.end("Resourse not found!");
+        }   
+        else{
+            response.end(data);
+        }
+    });
+}).listen(3000, function(){
+    console.log("Server started at 3000");
+});
 
 async function go() {
     const browser = await puppeteer.launch({
