@@ -1,10 +1,13 @@
+if(!process.env.RESUME_LINK) return console.log('нужно задать ссылку на резюме');
+if(!process.env.HHTOKEN) return console.log('нужно задать токен');
+
 const fs = require("fs");
 const http = require('http');
 const puppeteer = require('puppeteer');
 
 const webFolder = 'www';
 const screenshotName = 'screenshot.png';
-const buttonSelector = `div[data-qa-id="${process.env.QAID || null}"] button[data-qa="resume-update-button"]`;
+const buttonSelector = `*[data-qa="resume-update-button"]`;
 const headers = {
     'connection': 'keep-alive',
     'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="90", "Yandex";v="90"',
@@ -40,7 +43,7 @@ async function go() {
 
     await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 YaBrowser/21.5.1.330 Yowser/2.5 Safari/537.36");
     await page.setCookie({ name: "hhtoken", value: process.env.HHTOKEN || '', domain: ".hh.ru" });
-
+    await page.setExtraHTTPHeaders(headers);
     await page.setViewport({
         width: 1903,
         height: 964,
@@ -48,17 +51,19 @@ async function go() {
     });
 
     await page.setRequestInterception(true);
+    page.on('request', request => request.continue(headers));
 
-    await page.setExtraHTTPHeaders(headers);
+    await page.goto(process.env.RESUME_LINK);
 
-    page.on('request', (request) => {
-        request.continue(headers);
-    });
+    const buttons = await page.$$(buttonSelector);
+    for (let i = 0; i < buttons.length; i++) {
+        if(await buttons[i].boundingBox()){
+            buttons[i].click();
+            break;
+        }
+    }
 
-    await page.goto(`https://hh.ru/applicant/resumes`);
-    await page.waitForSelector(buttonSelector);
-    await page.click(buttonSelector);
-    await new Promise(r => setTimeout(() => r(), 1000));
+    await new Promise(r => setTimeout(() => r(), 2000));
     await page.screenshot({ path: `./${webFolder}/${screenshotName}` });
     await browser.close();
 }
