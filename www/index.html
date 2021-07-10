@@ -1,18 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>HH UPDATER</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body>* {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+    <script src="./script.js"></script>
 </head>
-<style>
-    html, body{
-        margin: 0;
-        padding: 0;
-    }
-</style>
+
 <body>
-    <img src='./screenshot.png'>
+    <div>
+        <form id="dataForm">
+            <input type="text" id="hhtoken" placeholder="hhtoken">
+            <input type="text" id="resumeUrl" placeholder="resumeUrl">
+            <input type="submit" value="Покормить Бота новыми печеньками">
+        </form>
+        <div>
+            (Бот установит новый токен и/или адрес резюме и будет использовать в следующих поднятиях резюме)
+        </div>
+    </div>
+    <div>
+        <input type="button" id="resumeUpdate" value="Пропросить Бота поднять резюме">
+        <div>
+            (Бот выполнит поднятие резюме и запустит/сбросит 4-часовой таймер автоподнятия)
+        </div>
+    </div>
+
+    <a href='./screenshot.png'>Фото-отчёт Бота</a>
 </body>
+
 </html>
