@@ -2,5 +2,24 @@
   "dependencies": {
     "node-fetch": "^2.6.1",
     "puppeteer": "^10.0.0"
-  }
+  },
+  "name": "hh_updater",
+  "description": "- `для настройки требет только ссылку на резюме и hhtoken из cookie`\r - `за Вас тыкает на кнопку \"поднять резюме\" раз в 4 часа`\r - `не ворует Ваши печеньки и не делает ни чего лишнего`\r - `показывает скринтшот после нажатия на 3000 порте`\r - `готов к работе в docker`\r - `не палится`",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dihan48/hh_updater.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dihan48/hh_updater/issues"
+  },
+  "homepage": "https://github.com/dihan48/hh_updater#readme"
 }

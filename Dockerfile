@@ -21,4 +21,4 @@ EXPOSE 3000
 # ENV RESUME_LINK=https://hh.ru/resume/XXXXXXXXXXXXX
 # ENV HHTOKEN=XXXXXXXXXX
 
-CMD ["node", "client.js"]
+CMD ["node", "index.js"]
