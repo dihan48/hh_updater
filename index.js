@@ -74,20 +74,21 @@ const apiHandlers = {
 
 async function go() {
     const browser = await puppeteer.launch({ args: ['--no-sandbox', '--headless', '--disable-gpu', '--disable-web-security', '--window-size=1920,1080'] });
-    const page = await browser.newPage()
-
-    await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 YaBrowser/21.5.1.330 Yowser/2.5 Safari/537.36");
+    const page = await browser.newPage();
     await page.setCookie({ name: "hhtoken", value: hhtoken || process.env.HHTOKEN || '', domain: ".hh.ru" });
-    await page.setExtraHTTPHeaders(headers);
-    await page.setViewport({
-        width: 1903,
-        height: 964,
-        deviceScaleFactor: 1,
-    });
-
-    await page.setRequestInterception(true);
     
     try {
+        await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 YaBrowser/21.5.1.330 Yowser/2.5 Safari/537.36");
+
+        await page.setExtraHTTPHeaders(headers);
+        await page.setViewport({
+            width: 1903,
+            height: 964,
+            deviceScaleFactor: 1,
+        });
+
+        await page.setRequestInterception(true);
+    
         page.on('request', request => request.continue(headers));
     } catch (error) {
         console.error(error);
