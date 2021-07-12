@@ -86,7 +86,12 @@ async function go() {
     });
 
     await page.setRequestInterception(true);
-    page.on('request', request => request.continue(headers));
+    
+    try {
+        page.on('request', request => request.continue(headers));
+    } catch (error) {
+        console.error(error);
+    }
 
     const url = resumeUrl || process.env.RESUME_LINK;
 
