@@ -1,24 +1,22 @@
-FROM node
+FROM node:16-alpine
 
-RUN apt-get update \
-    && apt-get install -y wget gnupg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-      --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/app
 
-WORKDIR /app
+ENV PORT=80
 
-RUN npm i node-fetch
-RUN npm i puppeteer
+# daemon for cron jobs
+RUN echo 'crond' > /boot.sh
+# RUN echo 'crontab .openode.cron' >> /boot.sh
 
-COPY ./ /app
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
 
-EXPOSE 3000
+COPY package*.json ./
 
-# ENV RESUME_LINK=https://hh.ru/resume/XXXXXXXXXXXXX
-# ENV HHTOKEN=XXXXXXXXXX
+RUN npm install --production
 
-CMD ["node", "client.js"]
+# Bundle app source
+COPY . .
+
+CMD sh /boot.sh && npm start
