@@ -6,8 +6,5 @@
   },
   "scripts": {
     "start": "node server.js"
-  },
-  "devDependencies": {
-    "@architect/sandbox": "^5.2.2"
   }
 }
