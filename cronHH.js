@@ -71,19 +71,18 @@ export async function loop() {
   if (data) {
     timer = data.updated + data.updateTimeout - new Date().getTime();
     timeout && clearTimeout(timeout);
-    timeout = setTimeout(async () => {
-      await loop();
-    }, timer);
+    if (timer < 0) {
+      send();
+    }
   } else {
     timer = status?.code === 200 ? 14460000 : 1800000;
     result = true;
     send();
-
-    timeout && clearTimeout(timeout);
-    timeout = setTimeout(async () => {
-      await loop();
-    }, timer);
   }
+
+  timeout = setTimeout(async () => {
+    await loop();
+  }, timer);
 
   status["last update (hh)"] = data?.updated
     ? new Date(data.updated).toLocaleString("ru-RU", {
