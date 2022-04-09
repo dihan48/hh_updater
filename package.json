@@ -1,4 +1,9 @@
 {
+  "name": "hh-updater",
+  "version": "2.1.0",
+  "main": "index.js",
+  "author": "Dihan48",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "formdata-node": "^4.3.2",
