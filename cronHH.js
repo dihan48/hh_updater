@@ -81,12 +81,12 @@ export async function loop() {
     const wait = data.updated + data.updateTimeout - new Date().getTime();
 
     if (wait < 0) {
-      timer = await send();
+      timer = await send(300000);
     } else {
       timer = wait;
     }
   } else {
-    timer = await send();
+    timer = await send(1800000);
   }
 
   timeout = setTimeout(async () => {
