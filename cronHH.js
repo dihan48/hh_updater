@@ -34,7 +34,7 @@ export async function send(errorWait) {
   let response = null;
 
   try {
-    response = await fetch("https://hh.ru/applicant/resumes/touch", options);
+    response = await fetch("https://spb.hh.ru/applicant/resumes/touch", options);
 
     if (response) {
       switch (response.status) {
