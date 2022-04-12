@@ -34,7 +34,10 @@ export async function send(errorWait) {
   let response = null;
 
   try {
-    response = await fetch("https://spb.hh.ru/applicant/resumes/touch", options);
+    response = await fetch(
+      "https://spb.hh.ru/applicant/resumes/touch",
+      options
+    );
 
     if (response) {
       switch (response.status) {
@@ -76,6 +79,7 @@ export async function loop() {
   timeout && clearTimeout(timeout);
 
   const data = await tryGetData();
+  logHHdata(data);
 
   if (data) {
     const wait = data.updated + data.updateTimeout - new Date().getTime();
@@ -93,6 +97,27 @@ export async function loop() {
     await loop();
   }, timer);
 
+  status["next run script"] = new Date(
+    new Date().getTime() + timer
+  ).toLocaleString("ru-RU", {
+    timeZone: "Europe/Moscow",
+  });
+}
+
+async function getWait() {
+  const data = await tryGetData();
+  logHHdata(data);
+
+  if (data) {
+    const wait = data.updated + data.updateTimeout - new Date().getTime();
+
+    return wait > 0 ? wait : 300000;
+  } else {
+    return 14400000;
+  }
+}
+
+function logHHdata(data) {
   status["last update (hh)"] = data?.updated
     ? new Date(data.updated).toLocaleString("ru-RU", {
         timeZone: "Europe/Moscow",
@@ -105,22 +130,4 @@ export async function loop() {
           timeZone: "Europe/Moscow",
         })
       : undefined;
-
-  status["next run script"] = new Date(
-    new Date().getTime() + timer
-  ).toLocaleString("ru-RU", {
-    timeZone: "Europe/Moscow",
-  });
-}
-
-async function getWait() {
-  const data = await tryGetData();
-
-  if (data) {
-    const wait = data.updated + data.updateTimeout - new Date().getTime();
-
-    return wait > 0 ? wait : 300000;
-  } else {
-    return 14400000;
-  }
 }
