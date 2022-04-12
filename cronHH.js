@@ -3,6 +3,10 @@ import { FormData } from "formdata-node";
 import { tryGetData } from "./hhData.js";
 import { HHTOKEN, RESUMEHASH } from "./consts.js";
 
+const waitNoData = 30 * 60 * 1000;
+const waitForceFlood = 5 * 60 * 1000;
+const waitAfterUpdate = 4 * 60 * 60 * 1000;
+
 let timer = null;
 let timeout = null;
 
@@ -85,12 +89,12 @@ export async function loop() {
     const wait = data.updated + data.updateTimeout - new Date().getTime();
 
     if (wait < 0) {
-      timer = await send(300000);
+      timer = await send(waitForceFlood);
     } else {
       timer = wait;
     }
   } else {
-    timer = await send(1800000);
+    timer = await send(waitNoData);
   }
 
   timeout = setTimeout(async () => {
@@ -111,9 +115,9 @@ async function getWait() {
   if (data) {
     const wait = data.updated + data.updateTimeout - new Date().getTime();
 
-    return wait > 0 ? wait : 300000;
+    return wait > 0 ? wait : waitForceFlood;
   } else {
-    return 14400000;
+    return waitAfterUpdate;
   }
 }
 
