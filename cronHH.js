@@ -16,7 +16,7 @@ const formData = new FormData();
 formData.append("resume", RESUMEHASH);
 formData.append("undirectable", "true");
 
-export function send() {
+export async function send(errorWait) {
   const options = {
     headers: {
       accept: "application/json",
@@ -30,8 +30,13 @@ export function send() {
     body: formData,
   };
 
-  fetch("https://hh.ru/applicant/resumes/touch", options)
-    .then(async (response) => {
+  let nextWait = errorWait;
+  let response = null;
+
+  try {
+    response = await fetch("https://hh.ru/applicant/resumes/touch", options);
+
+    if (response) {
       switch (response.status) {
         case 409:
           status.explanation = "Premature attempt";
@@ -41,6 +46,7 @@ export function send() {
           break;
         case 200:
           status.explanation = "Updated";
+          nextWait = await getWait();
           break;
 
         default:
@@ -50,34 +56,37 @@ export function send() {
 
       status.code = response.status;
       status.error = await response.text();
-    })
-    .catch((e) => {
-      status.code = e;
-      status.error = e.toString();
-    })
-    .finally(() => {
-      status["last run send"] = new Date().toLocaleString("ru-RU", {
-        timeZone: "Europe/Moscow",
-      });
-    });
+    }
+  } catch (error) {
+    console.error(error);
+    status.code = e;
+    status.error = e.toString();
+  }
+
+  status["last run send"] = new Date().toLocaleString("ru-RU", {
+    timeZone: "Europe/Moscow",
+  });
+
+  return nextWait;
 }
 
 await loop();
 
 export async function loop() {
-  let result = false;
+  timeout && clearTimeout(timeout);
+
   const data = await tryGetData();
 
   if (data) {
-    timer = data.updated + data.updateTimeout - new Date().getTime();
-    timeout && clearTimeout(timeout);
-    if (timer < 0) {
-      send();
+    const wait = data.updated + data.updateTimeout - new Date().getTime();
+
+    if (wait < 0) {
+      timer = await send();
+    } else {
+      timer = wait;
     }
   } else {
-    timer = status?.code === 200 ? 14460000 : 1800000;
-    result = true;
-    send();
+    timer = await send();
   }
 
   timeout = setTimeout(async () => {
@@ -102,5 +111,16 @@ export async function loop() {
   ).toLocaleString("ru-RU", {
     timeZone: "Europe/Moscow",
   });
-  return result;
+}
+
+async function getWait() {
+  const data = await tryGetData();
+
+  if (data) {
+    const wait = data.updated + data.updateTimeout - new Date().getTime();
+
+    return wait > 0 ? wait : 300000;
+  } else {
+    return 14400000;
+  }
 }

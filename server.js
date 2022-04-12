@@ -10,8 +10,7 @@ http
         <div>Sended...</div>F
       `;
       setTimeout(async () => {
-        const result = await loop();
-        if (result === false) send();
+        await loop();
       }, 0);
     } else {
       body = `
